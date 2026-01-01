@@ -6,13 +6,17 @@ import {
   StyleSheet,
   Pressable,
 } from "react-native";
-import { useRouter } from 'expo-router';
+import { useFonts } from 'expo-font';
 import {
-  Comfortaa_400Regular,
-  Comfortaa_700Bold
-} from '@expo-google-fonts/comfortaa';
+    Comfortaa_400Regular,
+    Comfortaa_700Bold
+}from '@expo-google-fonts/comfortaa';
 
-export default function CreateMatch() {
+export default function FirstInnings() {
+    const [fontsLoaded] = useFonts({
+        Comfortaa_400Regular,
+        Comfortaa_700Bold
+    });
   const [team1, setTeam1] = useState("");
   const [team2, setTeam2] = useState("");
   const [tossWonBy, setTossWonBy] = useState<"team1" | "team2" | null>(null);
@@ -21,7 +25,6 @@ export default function CreateMatch() {
   const [totalOvers, setTotalOvers] = useState("20");
   const [editingWickets, setEditingWickets] = useState(false);
   const [editingOvers, setEditingOvers] = useState(false);
-  const router = useRouter();
 
   const handleCreate = () => {
     console.log("Match Created:", {
@@ -31,7 +34,7 @@ export default function CreateMatch() {
       chooseTo,
       totalWickets,
       totalOvers,
-      battingTeam: chooseTo === "bat"
+      battingTeam: chooseTo === "bat" 
         ? (tossWonBy === "team1" ? team1 : team2)
         : (tossWonBy === "team1" ? team2 : team1),
       bowlingTeam: chooseTo === "ball"
@@ -39,19 +42,15 @@ export default function CreateMatch() {
         : (tossWonBy === "team1" ? team2 : team1)
     });
     // Here you would navigate to the match screen or save the data
-    router.push({
-      pathname: '/first-innings',
-      params: { name: 'Sarim', score: 120 },
-    });
-
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Create Match</Text>
+      <Text style={styles.heading}>Start First Innings</Text>
 
       {/* Team 1 */}
       <Text style={styles.label}>Team 1</Text>
+      <Text style={styles.label}>Strike Batsman</Text>
       <TextInput
         placeholder="Enter Team Name"
         placeholderTextColor="#aaa"
@@ -73,15 +72,15 @@ export default function CreateMatch() {
       {/* Toss */}
       <Text style={styles.label}>Toss Won by</Text>
       <View style={styles.radioRow}>
-        <Radio
-          label={team1 || "Team 1"}
-          selected={tossWonBy === "team1"}
-          onPress={() => setTossWonBy("team1")}
+        <Radio 
+          label={team1 || "Team 1"} 
+          selected={tossWonBy === "team1"} 
+          onPress={() => setTossWonBy("team1")} 
         />
-        <Radio
-          label={team2 || "Team 2"}
-          selected={tossWonBy === "team2"}
-          onPress={() => setTossWonBy("team2")}
+        <Radio 
+          label={team2 || "Team 2"} 
+          selected={tossWonBy === "team2"} 
+          onPress={() => setTossWonBy("team2")} 
         />
       </View>
 
@@ -111,8 +110,8 @@ export default function CreateMatch() {
               onSubmitEditing={() => setEditingWickets(false)}
             />
           ) : (
-            <Pressable
-              style={styles.box}
+            <Pressable 
+              style={styles.box} 
               onPress={() => setEditingWickets(true)}
             >
               <Text style={styles.boxText}>{totalWickets}</Text>
@@ -135,8 +134,8 @@ export default function CreateMatch() {
               onSubmitEditing={() => setEditingOvers(false)}
             />
           ) : (
-            <Pressable
-              style={styles.box}
+            <Pressable 
+              style={styles.box} 
               onPress={() => setEditingOvers(true)}
             >
               <Text style={styles.boxText}>{totalOvers}</Text>
@@ -144,15 +143,15 @@ export default function CreateMatch() {
           )}
         </View>
 
-
+       
       </View>
 
       {/* Create Button */}
-      <Pressable
+      <Pressable 
         style={[
-          styles.button,
+          styles.button, 
           (!team1 || !team2 || !tossWonBy || !chooseTo) && styles.buttonDisabled
-        ]}
+        ]} 
         onPress={handleCreate}
         disabled={!team1 || !team2 || !tossWonBy || !chooseTo}
       >
@@ -182,7 +181,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 22,
     fontWeight: "bold",
-    marginBottom: 20,fontFamily: 'Comfortaa_700Bold'
+    marginBottom: 20,
   },
   label: {
     color: "#fff",

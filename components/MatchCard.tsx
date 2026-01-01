@@ -1,5 +1,8 @@
 import { View, Text, StyleSheet } from "react-native";
-
+import {
+  Comfortaa_400Regular,
+  Comfortaa_700Bold
+} from '@expo-google-fonts/comfortaa';
 export default function MatchCard() {
   return (
     <View style={styles.card}>
@@ -7,14 +10,14 @@ export default function MatchCard() {
 
       <View style={styles.row}>
         <View style={styles.team}>
-          <Text style={styles.teamName}>PAK</Text>
+          <Text style={[styles.teamName, { fontFamily: 'Comfortaa_700Bold' }]}>PAK</Text>
           <Text style={styles.score}>120/3 (14.2)</Text>
         </View>
 
         <Text style={styles.vs}>VS</Text>
 
         <View style={styles.team}>
-          <Text style={styles.teamName}>IND</Text>
+          <Text style={[styles.teamName, { fontFamily: 'Comfortaa_700Bold' }]}>IND</Text>
           <Text style={styles.score}>120/3 (14.2)</Text>
         </View>
       </View>
@@ -34,6 +37,7 @@ const styles = StyleSheet.create({
   result: {
     fontSize: 12,
     color: "#555",
+    fontFamily: 'Comfortaa_700Bold',
     marginBottom: 8,
   },
   row: {
@@ -45,19 +49,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   teamName: {
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: 18,
+    fontFamily: 'Comfortaa_700Bold',
+    // fontWeight: "bold",
   },
   score: {
     fontSize: 13,
+    fontFamily: 'Comfortaa_700Bold',
     color: "#555",
   },
   vs: {
+    fontFamily: 'Comfortaa_700Bold',
     fontWeight: "bold",
   },
   overs: {
     fontSize: 12,
     color: "#555",
+    fontFamily: 'Comfortaa_700Bold',
     marginTop: 8,
   },
 });

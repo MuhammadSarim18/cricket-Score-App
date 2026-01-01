@@ -29,7 +29,8 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   title: {
-    fontSize: 14,
-    fontWeight: "600",
+    fontSize: 15,
+    // fontWeight: "600",
+    fontFamily: 'Comfortaa_700Bold',
   },
 });
