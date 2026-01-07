@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,170 +6,113 @@ import {
   StyleSheet,
   Pressable,
 } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import {
-    Comfortaa_400Regular,
-    Comfortaa_700Bold
-}from '@expo-google-fonts/comfortaa';
+  Comfortaa_400Regular,
+  Comfortaa_700Bold
+} from '@expo-google-fonts/comfortaa';
 
 export default function FirstInnings() {
-    const [fontsLoaded] = useFonts({
-        Comfortaa_400Regular,
-        Comfortaa_700Bold
-    });
-  const [team1, setTeam1] = useState("");
-  const [team2, setTeam2] = useState("");
-  const [tossWonBy, setTossWonBy] = useState<"team1" | "team2" | null>(null);
-  const [chooseTo, setChooseTo] = useState<"bat" | "ball" | null>(null);
-  const [totalWickets, setTotalWickets] = useState("10");
-  const [totalOvers, setTotalOvers] = useState("20");
-  const [editingWickets, setEditingWickets] = useState(false);
-  const [editingOvers, setEditingOvers] = useState(false);
+  // const [match, setMatch] = useState(null);
+  const [match, setMatch] = useState<Match | null>(null);
+
+  useEffect(() => {
+    const loadMatch = async () => {
+      const data = await AsyncStorage.getItem('currentMatch');
+      if (data) {
+        setMatch(JSON.parse(data));
+      }
+    };
+    loadMatch();
+  }, []);
+ 
+
+  const [fontsLoaded] = useFonts({
+    Comfortaa_400Regular,
+    Comfortaa_700Bold
+  });
+  const [strikeBatsman, setstrikeBatsman] = useState("");
+  const [nonStrikeBatsman, setnonStrikeBatsman] = useState("");
+  const [bowler, setBowler] = useState("");
 
   const handleCreate = () => {
     console.log("Match Created:", {
-      team1,
-      team2,
-      tossWonBy: tossWonBy === "team1" ? team1 : team2,
-      chooseTo,
-      totalWickets,
-      totalOvers,
-      battingTeam: chooseTo === "bat" 
-        ? (tossWonBy === "team1" ? team1 : team2)
-        : (tossWonBy === "team1" ? team2 : team1),
-      bowlingTeam: chooseTo === "ball"
-        ? (tossWonBy === "team1" ? team1 : team2)
-        : (tossWonBy === "team1" ? team2 : team1)
+      strikeBatsman,
+      nonStrikeBatsman,
+      bowler,
+
     });
+
     // Here you would navigate to the match screen or save the data
   };
+  type Match = {
+  team1: string;
+  team2: string;
+  battingTeam: string;
+  bowlingTeam: string;
+  totalOvers: number;
+  totalWickets: number;
+};
+
+   if (!match) {
+    return <Text>Loading match...</Text>;
+  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Start First Innings</Text>
 
-      {/* Team 1 */}
-      <Text style={styles.label}>Team 1</Text>
+      {/* Strike Batsman */}
+      <Text style={styles.label}>{match?.battingTeam}</Text>
       <Text style={styles.label}>Strike Batsman</Text>
       <TextInput
-        placeholder="Enter Team Name"
+        placeholder="Enter Name"
         placeholderTextColor="#aaa"
         style={styles.input}
-        value={team1}
-        onChangeText={setTeam1}
+        value={strikeBatsman}
+        onChangeText={setstrikeBatsman}
       />
 
-      {/* Team 2 */}
-      <Text style={styles.label}>Team 2</Text>
+      {/* Non-Strike Batsman */}
+      <Text style={styles.label}>Non-Strike Batsman</Text>
       <TextInput
-        placeholder="Enter Team Name"
+        placeholder="Enter Name"
         placeholderTextColor="#aaa"
         style={styles.input}
-        value={team2}
-        onChangeText={setTeam2}
+        value={nonStrikeBatsman}
+        onChangeText={setnonStrikeBatsman}
       />
 
-      {/* Toss */}
-      <Text style={styles.label}>Toss Won by</Text>
-      <View style={styles.radioRow}>
-        <Radio 
-          label={team1 || "Team 1"} 
-          selected={tossWonBy === "team1"} 
-          onPress={() => setTossWonBy("team1")} 
-        />
-        <Radio 
-          label={team2 || "Team 2"} 
-          selected={tossWonBy === "team2"} 
-          onPress={() => setTossWonBy("team2")} 
-        />
-      </View>
+      {/* Bowler */}
+      <Text style={styles.label}>{match.bowlingTeam}</Text>
+      <Text style={styles.label}>Bowler</Text>
+      <TextInput
+        placeholder="Enter Name"
+        placeholderTextColor="#aaa"
+        style={styles.input}
+        value={bowler}
+        onChangeText={setBowler}
+      />
 
-      {/* Choose */}
-      <Text style={styles.label}>Choose To</Text>
-      <View style={styles.radioRow}>
-        <Radio label="Bat" selected={chooseTo === "bat"} onPress={() => setChooseTo("bat")} />
-        <Radio label="Ball" selected={chooseTo === "ball"} onPress={() => setChooseTo("ball")} />
-      </View>
 
-      {/* Match Details - Now Editable */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Match Details</Text>
 
-        {/* Total Wickets - Editable */}
-        <View style={styles.detailRow}>
-          <Text>Total Wickets</Text>
-          {editingWickets ? (
-            <TextInput
-              style={[styles.box, styles.editableBox]}
-              value={totalWickets}
-              onChangeText={setTotalWickets}
-              keyboardType="numeric"
-              maxLength={2}
-              autoFocus
-              onBlur={() => setEditingWickets(false)}
-              onSubmitEditing={() => setEditingWickets(false)}
-            />
-          ) : (
-            <Pressable 
-              style={styles.box} 
-              onPress={() => setEditingWickets(true)}
-            >
-              <Text style={styles.boxText}>{totalWickets}</Text>
-            </Pressable>
-          )}
-        </View>
-
-        {/* Total Overs - Editable */}
-        <View style={styles.detailRow}>
-          <Text>Total Overs</Text>
-          {editingOvers ? (
-            <TextInput
-              style={[styles.box, styles.editableBox]}
-              value={totalOvers}
-              onChangeText={setTotalOvers}
-              keyboardType="numeric"
-              maxLength={3}
-              autoFocus
-              onBlur={() => setEditingOvers(false)}
-              onSubmitEditing={() => setEditingOvers(false)}
-            />
-          ) : (
-            <Pressable 
-              style={styles.box} 
-              onPress={() => setEditingOvers(true)}
-            >
-              <Text style={styles.boxText}>{totalOvers}</Text>
-            </Pressable>
-          )}
-        </View>
-
-       
-      </View>
 
       {/* Create Button */}
-      <Pressable 
+      <Pressable
         style={[
-          styles.button, 
-          (!team1 || !team2 || !tossWonBy || !chooseTo) && styles.buttonDisabled
-        ]} 
+          styles.button,
+          (!strikeBatsman || !nonStrikeBatsman || !bowler) && styles.buttonDisabled
+        ]}
         onPress={handleCreate}
-        disabled={!team1 || !team2 || !tossWonBy || !chooseTo}
+        disabled={!strikeBatsman || !nonStrikeBatsman || !bowler}
       >
-        <Text style={styles.buttonText}>Create Match</Text>
+        <Text style={styles.buttonText}>Start</Text>
       </Pressable>
     </View>
   );
 }
 
-/* 🔘 Radio Button Component */
-function Radio({ label, selected, onPress }: any) {
-  return (
-    <Pressable style={styles.radioItem} onPress={onPress}>
-      <View style={[styles.radio, selected && styles.radioActive]} />
-      <Text style={styles.radioLabel}>{label}</Text>
-    </Pressable>
-  );
-}
 
 const styles = StyleSheet.create({
   container: {
@@ -180,97 +123,22 @@ const styles = StyleSheet.create({
   heading: {
     color: "#fff",
     fontSize: 22,
-    fontWeight: "bold",
     marginBottom: 20,
+    fontFamily: 'Comfortaa_700Bold',
   },
   label: {
     color: "#fff",
     marginTop: 14,
     marginBottom: 6,
     fontSize: 16,
+    fontFamily: 'Comfortaa_400Regular',
   },
   input: {
     backgroundColor: "#fff",
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-  },
-  radioRow: {
-    flexDirection: "row",
-    gap: 30,
-    marginVertical: 8,
-  },
-  radioItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  radio: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: "#fff",
-  },
-  radioActive: {
-    backgroundColor: "#5B3CC4",
-    borderColor: "#5B3CC4",
-  },
-  radioLabel: {
-    color: "#fff",
-    fontSize: 16,
-  },
-  card: {
-    backgroundColor: "#D9DDE0",
-    borderRadius: 16,
-    padding: 16,
-    marginTop: 20,
-  },
-  cardTitle: {
-    fontWeight: "bold",
-    fontSize: 18,
-    marginBottom: 12,
-  },
-  detailRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 10,
-    alignItems: "center",
-  },
-  box: {
-    backgroundColor: "#0A1E33",
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    borderRadius: 6,
-    minWidth: 60,
-    alignItems: "center",
-  },
-  editableBox: {
-    backgroundColor: "#fff",
-    color: "#000",
-    fontSize: 16,
-    textAlign: "center",
-  },
-  boxText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  summary: {
-    marginTop: 15,
-    paddingTop: 15,
-    borderTopWidth: 1,
-    borderTopColor: "#999",
-  },
-  summaryTitle: {
-    fontWeight: "bold",
-    fontSize: 16,
-    marginBottom: 5,
-  },
-  summaryText: {
-    fontSize: 14,
-    marginBottom: 3,
-    color: "#333",
+    fontFamily: 'Comfortaa_400Regular',
   },
   button: {
     backgroundColor: "#5B3CC4",
@@ -286,6 +154,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: 'Comfortaa_700Bold',
   },
 });

@@ -7,6 +7,7 @@ import {
   Pressable,
 } from "react-native";
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   Comfortaa_400Regular,
   Comfortaa_700Bold
@@ -23,26 +24,35 @@ export default function CreateMatch() {
   const [editingOvers, setEditingOvers] = useState(false);
   const router = useRouter();
 
-  const handleCreate = () => {
-    console.log("Match Created:", {
+  const handleCreate = async () => {
+    const matchData = {
       team1,
       team2,
       tossWonBy: tossWonBy === "team1" ? team1 : team2,
       chooseTo,
       totalWickets,
       totalOvers,
-      battingTeam: chooseTo === "bat"
+      battingTeam: 
+      chooseTo === "bat"
         ? (tossWonBy === "team1" ? team1 : team2)
         : (tossWonBy === "team1" ? team2 : team1),
-      bowlingTeam: chooseTo === "ball"
+      bowlingTeam: 
+      chooseTo === "ball"
         ? (tossWonBy === "team1" ? team1 : team2)
-        : (tossWonBy === "team1" ? team2 : team1)
-    });
-    // Here you would navigate to the match screen or save the data
-    router.push({
-      pathname: '/first-innings',
-      params: { name: 'Sarim', score: 120 },
-    });
+        : (tossWonBy === "team1" ? team2 : team1),
+        createdAt: 
+        new Date().toISOString(),
+    }
+
+    try{
+      // Send match data to async storage
+       await AsyncStorage.setItem('currentMatch',JSON.stringify(matchData));
+       console.log('data saved!', matchData);
+       router.push('/first-innings');
+    }
+    catch(error){
+      console.error("Error saving match data:", error);
+    }
 
   };
 
@@ -181,8 +191,8 @@ const styles = StyleSheet.create({
   heading: {
     color: "#fff",
     fontSize: 22,
-    fontWeight: "bold",
-    marginBottom: 20,fontFamily: 'Comfortaa_700Bold'
+    marginBottom: 20,
+    fontFamily: 'Comfortaa_700Bold'
   },
   label: {
     color: "#fff",
