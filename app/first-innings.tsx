@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Pressable,
 } from "react-native";
+import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import {
@@ -16,6 +17,7 @@ import {
 export default function FirstInnings() {
   // const [match, setMatch] = useState(null);
   const [match, setMatch] = useState<Match | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const loadMatch = async () => {
@@ -26,7 +28,7 @@ export default function FirstInnings() {
     };
     loadMatch();
   }, []);
- 
+
 
   const [fontsLoaded] = useFonts({
     Comfortaa_400Regular,
@@ -43,19 +45,20 @@ export default function FirstInnings() {
       bowler,
 
     });
+    router.push('/start-innings');
 
     // Here you would navigate to the match screen or save the data
   };
   type Match = {
-  team1: string;
-  team2: string;
-  battingTeam: string;
-  bowlingTeam: string;
-  totalOvers: number;
-  totalWickets: number;
-};
+    team1: string;
+    team2: string;
+    battingTeam: string;
+    bowlingTeam: string;
+    totalOvers: number;
+    totalWickets: number;
+  };
 
-   if (!match) {
+  if (!match) {
     return <Text>Loading match...</Text>;
   }
 
